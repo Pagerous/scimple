@@ -1,13 +1,13 @@
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, Union
 
 if TYPE_CHECKING:
     from src.container import SchemaURI
     from src.data.operator import BinaryAttributeOperator, UnaryAttributeOperator
-    from src.data.schemas import ResourceSchema
+    from src.data.schemas import ResourceSchema, BaseSchema, SchemaExtension
 
 
 resources: dict[str, "ResourceSchema"] = {}
-schemas: dict[str, bool] = {}
+schemas: dict[str, Union["BaseSchema", "SchemaExtension"]] = {}
 
 
 def register_resource_schema(resource_schema: "ResourceSchema"):
@@ -16,8 +16,8 @@ def register_resource_schema(resource_schema: "ResourceSchema"):
     resources[resource_schema.name] = resource_schema
 
 
-def register_schema(schema: "SchemaURI", extension: bool = False):
-    schemas[schema] = extension
+def register_schema(schema_uri: "SchemaURI", schema_or_extension: Union["BaseSchema", "SchemaExtension"]):
+    schemas[schema_uri] = schema_or_extension
 
 
 Converter = Callable[[Any], Any]

@@ -96,13 +96,14 @@ class BoundedAttrRep(AttrRep):
     ):
         super().__init__(attr, sub_attr)
         schema = SchemaURI(schema)
-        is_extension = schemas.get(schema)
-        if is_extension is None:
+
+        schema_ = schemas.get(schema)
+        if schema_ is None:
             raise ValueError(f"unknown schema {schema!r}")
 
         self._repr = f"{schema}:{self._repr}"
         self._schema = schema
-        self._extension = is_extension
+        self._extension = type(schema_).__name__ == "SchemaExtension"
 
     def __eq__(self, other: Any) -> bool:
         parent_equals = super().__eq__(other)

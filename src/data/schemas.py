@@ -48,7 +48,7 @@ class BaseSchema:
         common_attrs: Optional[Iterable[str]] = None,
     ):
         schema = SchemaURI(schema)
-        register_schema(schema)
+        register_schema(schema, self)
         self._attrs = BoundedAttrs(
             schema=schema,
             attrs=[
@@ -598,7 +598,7 @@ class SchemaExtension:
         description: str = "",
     ):
         self._schema = SchemaURI(schema)
-        register_schema(self._schema, True)
+        register_schema(self._schema, self)
         self._attrs = BoundedAttrs(self._schema, attrs)
         self._name = name
         self._description = description

@@ -3,7 +3,7 @@ from typing import Iterable, Optional, cast
 from marshmallow import Schema, fields, post_dump
 
 from src.assets.schemas import ListResponse
-from src.container import AttrName, BoundedAttrRep
+from src.container import AttrName, BoundedAttrRep, AttrRep
 from src.data.attrs import (
     Attribute,
     AttributeReturn,
@@ -38,13 +38,13 @@ _marshmallow_field_by_attr_type = {
 
 def _get_fields(
     attrs: Iterable[tuple[BoundedAttrRep, Attribute]],
-    field_by_attr_name: Optional[dict[str, fields.Field]] = None,
+    field_by_attr_rep: Optional[dict[AttrRep, fields.Field]] = None,
 ) -> dict[str, fields.Field]:
-    field_by_attr_name = field_by_attr_name or {}
+    field_by_attr_rep = field_by_attr_rep or {}
     fields_: dict[str, fields.Field] = {}
     for attr_rep, attr in attrs:
-        if attr_rep.attr in field_by_attr_name:
-            field = field_by_attr_name[attr_rep.attr]
+        if attr_rep in field_by_attr_rep:
+            field = field_by_attr_rep[attr_rep]
         else:
             kwargs = _get_kwargs(attr)
             if attr.multi_valued:
@@ -107,8 +107,8 @@ def response_serializer(validator: Validator):
         resources_attr = cast(Attribute, scimple_schema.attrs.get("resources"))
         base_fields = _get_fields(
             scimple_schema.attrs.core_attrs,
-            field_by_attr_name={
-                scimple_schema.attrs.resources.attr: fields.List(
+            field_by_attr_rep={
+                scimple_schema.attrs.resources: fields.List(
                     fields.Nested(_get_fields(scimple_schema.contained_schemas[0].attrs)),
                     **_get_kwargs(resources_attr),
                 )
