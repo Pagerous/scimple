@@ -1,3 +1,4 @@
+from scimpler.data.attr_presence import AttrPresenceConfig
 from scimpler.data.attrs import (
     AttrFilter,
     Attribute,
